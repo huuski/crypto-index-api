@@ -44,7 +44,10 @@ namespace crypto_index_api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Crypto}/{action=Btc}/{id?}"
+                );
             });
         }
     }

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using crypto_index_api.Models;
+using crypto_index_api.Models.Request;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -66,6 +67,49 @@ namespace crypto_index_api.Services
             return currentPrice;
         }
 
+        public void UpdateCurrency(BtcRequest btcRequest)
+        {
+            Validate(btcRequest);
+
+            string filePath = "currencies.json";
+
+            string json = File.ReadAllText(filePath);
+
+            dynamic jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+            switch(btcRequest.Currency)
+            {
+                case "BRL":
+                    jsonObject["BRL"] = btcRequest.Value;
+                    break;
+
+                case "EUR":
+                    jsonObject["EUR"] = btcRequest.Value;
+                    break;
+
+                case "CAD":
+                    jsonObject["CAD"] = btcRequest.Value;
+                    break;
+            }
+
+            WriteToFile(filePath, jsonObject);
+        }
+
+        private void Validate(BtcRequest btcRequest)
+        {
+            List<string> availableCurrencies = new List<string>() { "BRL", "EUR", "CAD" };
+
+            if (!availableCurrencies.Contains(btcRequest.Currency))
+            {
+                throw new Exception("Moeda inválida");
+            }
+
+            if (float.Parse(btcRequest.Value) <= 0)
+            {
+                throw new Exception("Valor inválido");
+            }
+        }
+
         private List<CurrencyRate> ReadFromFile(string filePath)
         {
             var currencyRateList = new List<CurrencyRate>();
@@ -88,6 +132,13 @@ namespace crypto_index_api.Services
             }
 
             return currencyRateList;
+        }
+
+        private void WriteToFile(string filePath, dynamic jsonObject)
+        {
+            string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObject, Newtonsoft.Json.Formatting.Indented);
+
+            File.WriteAllText(filePath, output);
         }
 
         private List<CurrencyRate> CalculateCurrencyRate(double baseRate)

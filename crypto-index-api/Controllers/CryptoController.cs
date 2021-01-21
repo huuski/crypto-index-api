@@ -1,5 +1,6 @@
 using System;
-using System.Collections.Generic;
+using crypto_index_api.Models;
+using crypto_index_api.Models.Request;
 using crypto_index_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,36 +13,35 @@ namespace crypto_index_api.Controllers
         CryptoService _cryptoService = new CryptoService();
 
         [HttpGet]
+        [Route("btc")]
         public IActionResult Get()
         {
             try
             {
                 var response = _cryptoService.GetCurrentPrice();
 
-                return StatusCode(200, response);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "Error");
+                return BadRequest(new ErrorResponse() { Message = ex.Message });
             }
         }
 
-        // POST: api/Crypto
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("btc")]
+        public IActionResult Post([FromBody] BtcRequest btcRequest)
         {
-        }
+            try
+            {
+                _cryptoService.UpdateCurrency(btcRequest);
 
-        // PUT: api/Crypto/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+                return Ok(new SuccessResponse() { Message = "Valor alterado com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse() { Message = ex.Message });
+            }
         }
     }
 }
