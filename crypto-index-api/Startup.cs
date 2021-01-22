@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using crypto_index_api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,16 @@ namespace crypto_index_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:8080/")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +46,19 @@ namespace crypto_index_api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Response.Headers.Add("Message", "Steve Smith");
+                    await next();
+                }
+            });
+
+            app.UseCors(builder => builder.WithOrigins("http://localhost:8080"));
 
             app.UseHttpsRedirection();
 

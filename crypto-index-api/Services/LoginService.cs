@@ -8,15 +8,25 @@ namespace crypto_index_api.Services
     {
         public void Validate(AuthenticationRequest authenticationRequest)
         {
-            bool isValid = true;
+            if (string.IsNullOrEmpty(authenticationRequest.Email))
+            {
+                throw new Exception("Campos inválidos");
+            }
 
-            var isValidEmail = Regex.IsMatch(authenticationRequest.Email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+            if (string.IsNullOrEmpty(authenticationRequest.Password))
+            {
+                throw new Exception("Campos inválidos");
+            }
 
-            if (!isValidEmail) isValid = false;
+            if (!Regex.IsMatch(authenticationRequest.Email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
+            {
+                throw new Exception("Campos inválidos");
+            }
 
-            if (authenticationRequest.Password.Length != 6) isValid = false;
-
-            if (!isValid) throw new Exception("Campos inválidos");
+            if (authenticationRequest.Password.Length != 6)
+            {
+                throw new Exception("Campos inválidos");
+            }
         }
 
         public AuthenticationResponse Authenticate(AuthenticationRequest authenticationRequest)
