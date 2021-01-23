@@ -14,11 +14,11 @@ namespace crypto_index_api.Controllers
 
         [HttpGet]
         [Route("btc")]
-        public IActionResult Get()
+        public IActionResult Get(int? quantity)
         {
             try
             {
-                var response = _cryptoService.GetCurrentPrice();
+                var response = _cryptoService.GetCurrentPrice(quantity);
 
                 return Ok(response);
             }

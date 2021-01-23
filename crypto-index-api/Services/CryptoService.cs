@@ -13,7 +13,7 @@ namespace crypto_index_api.Services
 {
     public class CryptoService
     {
-        public CurrentPrice GetCurrentPrice()
+        public CurrentPrice GetCurrentPrice(int? quantity)
         {
             CurrentPrice currentPrice = new CurrentPrice();
 
@@ -28,9 +28,15 @@ namespace crypto_index_api.Services
 
                 double baseRate = Math.Round(double.Parse(currentPrice.Bpi.USD.Rate, CultureInfo.InvariantCulture), 4, MidpointRounding.AwayFromZero);
 
+                if (quantity.HasValue)
+                {
+                    baseRate = baseRate * quantity.Value;
+                }
+
                 var currencyRateList = CalculateCurrencyRate(baseRate);
 
                 currentPrice.Bpi.USD.RateFloat = baseRate;
+                currentPrice.Bpi.USD.Rate = string.Format("{0:0,0.00}", baseRate);
 
                 var brlRate = currencyRateList.Where(w => w.Name.Equals("BRL")).Select(s => new { s.Rate, s.USDRate }).FirstOrDefault();
                 var eurRate = currencyRateList.Where(w => w.Name.Equals("EUR")).Select(s => new { s.Rate, s.USDRate }).FirstOrDefault();
