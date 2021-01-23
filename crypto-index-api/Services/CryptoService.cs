@@ -32,32 +32,35 @@ namespace crypto_index_api.Services
 
                 currentPrice.Bpi.USD.RateFloat = baseRate;
 
-                var brlRate = currencyRateList.Where(w => w.Name.Equals("BRL")).Select(s => s.Rate).FirstOrDefault();
-                var eurRate = currencyRateList.Where(w => w.Name.Equals("EUR")).Select(s => s.Rate).FirstOrDefault();
-                var cadRate = currencyRateList.Where(w => w.Name.Equals("CAD")).Select(s => s.Rate).FirstOrDefault();
+                var brlRate = currencyRateList.Where(w => w.Name.Equals("BRL")).Select(s => new { s.Rate, s.USDRate }).FirstOrDefault();
+                var eurRate = currencyRateList.Where(w => w.Name.Equals("EUR")).Select(s => new { s.Rate, s.USDRate }).FirstOrDefault();
+                var cadRate = currencyRateList.Where(w => w.Name.Equals("CAD")).Select(s => new { s.Rate, s.USDRate }).FirstOrDefault();
 
                 currentPrice.Bpi.BRL = new BRL()
                 {
                     Code = "BRL",
                     Description = "Brazilian Real",
-                    Rate = string.Format("{0:0,0.00}", brlRate),
-                    RateFloat = brlRate
+                    Rate = string.Format("{0:0,0.00}", brlRate.Rate),
+                    RateFloat = brlRate.Rate,
+                    USDRate = brlRate.USDRate
                 };
 
                 currentPrice.Bpi.EUR = new EUR()
                 {
                     Code = "EUR",
                     Description = "Euro",
-                    Rate = string.Format("{0:#,0.00}", eurRate),
-                    RateFloat = eurRate
+                    Rate = string.Format("{0:#,0.00}", eurRate.Rate),
+                    RateFloat = eurRate.Rate,
+                    USDRate = eurRate.USDRate
                 };
 
                 currentPrice.Bpi.CAD = new CAD()
                 {
                     Code = "CAD",
                     Description = "Canadian Dollar",
-                    Rate = string.Format("{0:#,0.00}", cadRate),
-                    RateFloat = cadRate
+                    Rate = string.Format("{0:#,0.00}", cadRate.Rate),
+                    RateFloat = cadRate.Rate,
+                    USDRate = cadRate.USDRate
                 };
             }
             else
@@ -147,6 +150,7 @@ namespace crypto_index_api.Services
 
             foreach (var item in currencyList)
             {
+                item.USDRate = item.Rate;
                 item.Rate = Math.Round(item.Rate * baseRate, 4);
             }
 

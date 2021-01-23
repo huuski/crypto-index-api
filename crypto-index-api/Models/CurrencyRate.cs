@@ -5,5 +5,7 @@
         public string Name { get; set; }
 
         public double Rate { get; set; }
+
+        public double USDRate { get; set; }
     }
 }

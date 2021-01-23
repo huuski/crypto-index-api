@@ -22,6 +22,7 @@ namespace crypto_index_api.Models
         public string Rate { get; set; }
         public string Description { get; set; }
         public double RateFloat { get; set; }
+        public double USDRate { get; set; }
     }
 
     public class BTC

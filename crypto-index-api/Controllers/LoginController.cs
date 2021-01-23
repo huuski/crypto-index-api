@@ -1,7 +1,6 @@
 using System;
 using crypto_index_api.Models;
 using crypto_index_api.Services;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace crypto_index_api.Controllers
