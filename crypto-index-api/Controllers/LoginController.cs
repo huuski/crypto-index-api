@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace crypto_index_api.Controllers
 {
-    [Route("api/login")]
+    [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
