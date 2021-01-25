@@ -20,3 +20,5 @@
 - [x] /api/login (POST): realiza o login na aplicação
 - [x] /api/crypto/btc (GET): retorna os valores das cotações
 - [X] /api/crypto/btc (POST): atualiza o valor da cotação para uma moeda
+
+Docker: <code>docker run -d -p 5001 huuski/crypto-index-api</code>
