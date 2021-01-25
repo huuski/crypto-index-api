@@ -2,6 +2,7 @@ using System;
 using crypto_index_api.Models;
 using crypto_index_api.Models.Request;
 using crypto_index_api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace crypto_index_api.Controllers
@@ -14,6 +15,7 @@ namespace crypto_index_api.Controllers
 
         [HttpGet]
         [Route("btc")]
+        [ServiceFilter(typeof(CryptoAuthorize))]
         public IActionResult Get(int? quantity)
         {
             try
@@ -30,6 +32,7 @@ namespace crypto_index_api.Controllers
 
         [HttpPost]
         [Route("btc")]
+        [ServiceFilter(typeof(CryptoAuthorize))]
         public IActionResult Post([FromBody] BtcRequest btcRequest)
         {
             try

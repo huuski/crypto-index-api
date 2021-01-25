@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using crypto_index_api.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +30,10 @@ namespace crypto_index_api
         {
             services.AddControllers();
 
+            services.AddAuthorization();
+
+            services.AddScoped<CryptoAuthorize>();
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -47,18 +53,23 @@ namespace crypto_index_api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
+            app.UseExceptionHandler("/error");
+
+            app.UseCors(builder => builder.WithOrigins("http://localhost:8080"));
+
+            app.Use(async (ctx, next) =>
             {
                 await next();
 
-                if (context.Response.StatusCode == 404)
+                if (ctx.Response.StatusCode == 404 && !ctx.Response.HasStarted)
                 {
-                    context.Response.Headers.Add("Message", "Steve Smith");
+                    string originalPath = ctx.Request.Path.Value;
+                    ctx.Items["originalPath"] = originalPath;
+                    ctx.Request.Path = "/error";
+
                     await next();
                 }
             });
-
-            app.UseCors(builder => builder.WithOrigins("http://localhost:8080"));
 
             app.UseHttpsRedirection();
 
